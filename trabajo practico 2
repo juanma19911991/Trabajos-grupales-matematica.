@@ -1,0 +1,89 @@
+# Trabajo Práctico – Conjuntos, Lógica y Años
+# Integrantes: Enrique Alejandro Juarez Alvarez / Juan Martin Amicone Figuerero
+
+from itertools import product
+from datetime import datetime
+
+# A. Operaciones con DNIs
+
+def obtener_digitos_unicos(dni):
+    return set(int(d) for d in str(dni))
+
+def frecuencia_digitos(dni):
+    freq = {}
+    for d in str(dni):
+        freq[d] = freq.get(d, 0) + 1
+    return freq
+
+def suma_digitos(dni):
+    return sum(int(d) for d in str(dni))
+
+dni_list = []
+n = int(input("¿Cuántos integrantes tiene el grupo? "))
+for i in range(n):
+    dni = input(f"Ingrese el DNI del integrante {i+1}: ")
+    dni_list.append(dni)
+
+conjuntos = [obtener_digitos_unicos(dni) for dni in dni_list]
+
+for i, dni in enumerate(dni_list):
+    print(f"\nDNI {i+1}: {dni}")
+    print("Conjunto de dígitos únicos:", conjuntos[i])
+    print("Frecuencia de dígitos:", frecuencia_digitos(dni))
+    print("Suma de los dígitos:", suma_digitos(dni))
+
+union_total = set.union(*conjuntos)
+interseccion_total = set.intersection(*conjuntos)
+print("\n--- OPERACIONES GLOBALES ---")
+print("Unión total:", union_total)
+print("Intersección total:", interseccion_total)
+
+print("\n--- DIFERENCIAS ENTRE PARES ---")
+for i in range(n):
+    for j in range(i+1, n):
+        print(f"Conjunto {i+1} - Conjunto {j+1}:", conjuntos[i] - conjuntos[j])
+        print(f"Diferencia simétrica {i+1} Δ {j+1}:", conjuntos[i] ^ conjuntos[j])
+
+print("\n--- CONDICIONES LÓGICAS ---")
+if interseccion_total:
+    print("Dígito compartido entre todos:", interseccion_total)
+
+for i, conj in enumerate(conjuntos):
+    if len(conj) > 6:
+        print(f"Conjunto {i+1} tiene diversidad numérica alta ({len(conj)} elementos)")
+
+# B. Años de nacimiento
+
+def es_bisiesto(anio):
+    return (anio % 4 == 0 and anio % 100 != 0) or (anio % 400 == 0)
+
+años = []
+for i in range(n):
+    anio = int(input(f"Ingrese el año de nacimiento del integrante {i+1}: "))
+    años.append(anio)
+
+pares = 0
+impares = 0
+for a in años:
+    if a % 2 == 0:
+        pares += 1
+    else:
+        impares += 1
+
+print("\n--- AÑOS DE NACIMIENTO ---")
+print("Años pares:", pares)
+print("Años impares:", impares)
+
+if all(a > 2000 for a in años):
+    print("Grupo Z")
+
+if any(es_bisiesto(a) for a in años):
+    print("Tenemos un año especial (bisiesto en el grupo)")
+
+actual = datetime.now().year
+edades = [actual - a for a in años]
+producto_cartesiano = list(product(años, edades))
+
+print("\n--- PRODUCTO CARTESIANO (Año x Edad) ---")
+for par in producto_cartesiano:
+    print(par)
